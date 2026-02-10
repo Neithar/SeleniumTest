@@ -1,17 +1,11 @@
 package com.gitlab.rmarzec.pageObjects;
-
 import com.gitlab.rmarzec.model.YTTile;
+import com.gitlab.rmarzec.util.BasePage;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.*;
-
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class YouTubePage {
-
-    private WebDriver driver;
-    private WebDriverWait wait;
+public class YouTubePage extends BasePage {
 
     private static final String URL = "https://www.youtube.com/";
 
@@ -31,44 +25,40 @@ public class YouTubePage {
             "ytd-thumbnail-overlay-time-status-renderer div.yt-badge-shape__text");
 
     public YouTubePage(WebDriver driver) {
-        this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        super(driver);
     }
 
-    public void open() {
+    public void goToHomePage() {
         driver.get(URL);
     }
 
     public void acceptCookiesIfPresent() {
         try {
-            wait.until(ExpectedConditions.elementToBeClickable(acceptCookiesButton)).click();
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(overlay));
+            waitUntilClickable(acceptCookiesButton).click();
+            waitUntilInvisibility(overlay);
         } catch (Exception ignored) {
         }
     }
 
     public void goToShorts() {
-        wait.until(ExpectedConditions.elementToBeClickable(shortsTab)).click();
+        waitUntilClickable(shortsTab).click();
     }
 
     public String getFirstShortChannelName() {
-        return wait.until(ExpectedConditions
-                        .visibilityOfElementLocated(firstShortChannel))
-                .getText();
+        return waitUntilVisible(firstShortChannel).getText();
     }
 
     public void search(String keyword) {
-        WebElement input = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(searchInput));
+        WebElement input = waitUntilVisible(searchInput);
         input.clear();
         input.sendKeys(keyword + Keys.ENTER);
     }
 
     public List<YTTile> getFirstNVideos(int n) {
 
-        wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(videoTiles, n - 1));
+        waitUntilNumberOfElementsMoreThan(videoTiles, n - 1);
 
-        List<WebElement> videos = driver.findElements(videoTiles);
+        List<WebElement> videos = findAll(videoTiles);
         List<YTTile> result = new ArrayList<>();
 
         for (WebElement video : videos) {
@@ -80,7 +70,8 @@ public class YouTubePage {
             tile.setTitle(video.findElement(title).getText());
             tile.setChannel(video.findElement(channel).getText());
 
-            List<WebElement> durationElements = video.findElements(durationBadge);
+            List<WebElement> durationElements =
+                    video.findElements(durationBadge);
 
             if (!durationElements.isEmpty()) {
                 String length = durationElements.get(0)

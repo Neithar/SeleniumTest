@@ -2,7 +2,9 @@ package com.gitlab.rmarzec.task;
 import com.gitlab.rmarzec.pageObjects.YouTubePage;
 import com.gitlab.rmarzec.framework.utils.DriverFactory;
 import org.openqa.selenium.WebDriver;
+import org.testng.Assert;
 import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import com.gitlab.rmarzec.model.YTTile;
 import java.util.List;
@@ -10,22 +12,32 @@ import java.util.List;
 
 public class Task4Test {
 
-    WebDriver driver = new DriverFactory().initDriver();
-    YouTubePage ytPage = new YouTubePage(driver);
+    private WebDriver driver;
+    private YouTubePage ytPage;
+    int videosToList = 12;
+
+    @BeforeTest
+    public void beforeTest() {
+        driver = new DriverFactory().initDriver();
+        ytPage = new YouTubePage(driver);
+    }
 
     @Test
-    public void YouTubeTest() {
+    public void listNonLiveVideosFromSearch() {
 
-        ytPage.open();
+        ytPage.goToHomePage();
         ytPage.acceptCookiesIfPresent();
 
         ytPage.goToShorts();
-        System.out.println("Shorts channel: " + ytPage.getFirstShortChannelName());
+        String shortChannelName = ytPage.getFirstShortChannelName();
+        Assert.assertFalse(shortChannelName.isEmpty(), "Shorts channel is empty!");
+        System.out.println("Shorts channel: " + shortChannelName);
 
-        ytPage.open(); // back to homepage
+        ytPage.goToHomePage(); // back to homepage
         ytPage.search("Live");
 
-        List<YTTile> tiles = ytPage.getFirstNVideos(12);
+        List<YTTile> tiles = ytPage.getFirstNVideos(videosToList);
+        Assert.assertFalse(tiles.isEmpty(), "The list of videos is empty!");
 
         for (YTTile tile : tiles) {
             if (!"live".equalsIgnoreCase(tile.getLength())) {
@@ -35,7 +47,9 @@ public class Task4Test {
     }
 
     @AfterTest
-    public void CloseBrowser() {
-        driver.quit();
+    public void afterTest() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }
