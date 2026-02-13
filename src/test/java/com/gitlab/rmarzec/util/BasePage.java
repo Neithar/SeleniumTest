@@ -20,6 +20,10 @@ public abstract class BasePage {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
+    protected List<WebElement> waitUntilVisibleAll(By locator) {
+        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
+    }
+
     protected WebElement waitUntilClickable(By locator) {
         return wait.until(ExpectedConditions.elementToBeClickable(locator));
     }
@@ -39,9 +43,5 @@ public abstract class BasePage {
     protected void waitUntilNumberOfWindowsToBe(int number) {
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.numberOfWindowsToBe(number));
-    }
-
-    protected List<WebElement> waitUntilVisibleAll(By locator) {
-        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
     }
 }

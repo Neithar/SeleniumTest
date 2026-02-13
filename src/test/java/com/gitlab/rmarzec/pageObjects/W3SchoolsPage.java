@@ -2,8 +2,6 @@ package com.gitlab.rmarzec.pageObjects;
 import com.gitlab.rmarzec.util.BasePage;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.Select;
-import java.util.ArrayList;
-import java.util.List;
 
 public class W3SchoolsPage extends BasePage {
 
@@ -24,7 +22,9 @@ public class W3SchoolsPage extends BasePage {
             driver.switchTo().frame(driver.findElement(cookieIframe));
             waitUntilClickable(acceptCookiesButton).click();
             driver.switchTo().defaultContent();
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            System.out.println("Cookie banner not found: " + e.getMessage());
+        }
     }
 
     public void clickTryItYourself() {
@@ -33,8 +33,13 @@ public class W3SchoolsPage extends BasePage {
 
     public void switchToTryItWindow() {
         waitUntilNumberOfWindowsToBe(2);
-        List<String> windows = new ArrayList<>(driver.getWindowHandles());
-        driver.switchTo().window(windows.get(1));
+        String mainWindow = driver.getWindowHandle();
+        for (String handle : driver.getWindowHandles()) {
+            if (!handle.equals(mainWindow)) {
+                driver.switchTo().window(handle);
+                break;
+            }
+        }
     }
 
     public String getHeaderText() {

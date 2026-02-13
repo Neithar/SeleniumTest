@@ -17,7 +17,7 @@ public class Task4Test {
     int videosToList = 12;
 
     @BeforeTest
-    public void beforeTest() {
+    public void setUp() {
         driver = new DriverFactory().initDriver();
         ytPage = new YouTubePage(driver);
     }
@@ -30,14 +30,14 @@ public class Task4Test {
 
         ytPage.goToShorts();
         String shortChannelName = ytPage.getFirstShortChannelName();
-        Assert.assertFalse(shortChannelName.isEmpty(), "Shorts channel is empty!");
+        Assert.assertFalse(shortChannelName.isEmpty(), "Shorts channel is empty or has not been found");
         System.out.println("Shorts channel: " + shortChannelName);
 
         ytPage.goToHomePage(); // back to homepage
         ytPage.search("Live");
 
         List<YTTile> tiles = ytPage.getFirstNVideos(videosToList);
-        Assert.assertFalse(tiles.isEmpty(), "The list of videos is empty!");
+        Assert.assertFalse(tiles.isEmpty(), "The list of videos is empty or has not been found");
 
         for (YTTile tile : tiles) {
             if (!"live".equalsIgnoreCase(tile.getLength())) {
@@ -47,7 +47,7 @@ public class Task4Test {
     }
 
     @AfterTest
-    public void afterTest() {
+    public void tearDown() {
         if (driver != null) {
             driver.quit();
         }

@@ -15,8 +15,12 @@ public class Task3Test {
     private GooglePage googlePage;
     private W3SchoolsPage w3Page;
 
+    private static final String EXPECTED_URL = "https://www.w3schools.com/tags/tag_select.asp";
+    private static final String EXPECTED_HEADER = "The select element";
+    private static final String SELECT_OPTION = "Opel";
+
     @BeforeTest
-    public void beforeTest() {
+    public void setUp() {
         driver = new DriverFactory().initDriver();
         googlePage = new GooglePage(driver);
         w3Page = new W3SchoolsPage(driver);
@@ -30,9 +34,10 @@ public class Task3Test {
         googlePage.search("HTML select tag - W3Schools");
         googlePage.clickLucky();
 
-        String expectedUrl = "https://www.w3schools.com/tags/tag_select.asp";
-        if (!driver.getCurrentUrl().contains("w3schools.com/tags/tag_select.asp")) {
-            driver.get(expectedUrl);
+
+        if (!driver.getCurrentUrl().equals(EXPECTED_URL)) {
+            System.out.println("Unexpected URL: " + driver.getCurrentUrl());
+            driver.get(EXPECTED_URL);
         }
 
         w3Page.acceptCookiesIfPresent();
@@ -40,15 +45,15 @@ public class Task3Test {
         w3Page.switchToTryItWindow();
 
         String headerText = w3Page.getHeaderText();
+        Assert.assertEquals(headerText, EXPECTED_HEADER);
         System.out.println("Header: " + headerText);
-        Assert.assertFalse(headerText.isEmpty(), "Header should not be empty");
 
-        w3Page.selectOptionByVisibleText("Opel");
+        w3Page.selectOptionByVisibleText(SELECT_OPTION);
         System.out.println("Selected: " + w3Page.getSelectedOptionText());
     }
 
     @AfterTest
-    public void afterTest() {
+    public void tearDown() {
         if (driver != null) driver.quit();
     }
 }

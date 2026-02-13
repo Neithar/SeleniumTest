@@ -9,7 +9,6 @@ public class YouTubePage extends BasePage {
 
     private static final String URL = "https://www.youtube.com/";
 
-    // Locators
     private final By acceptCookiesButton = By.cssSelector(
             "div.eom-buttons.style-scope.ytd-consent-bump-v2-lightbox " +
                     "ytd-button-renderer:nth-of-type(2) button");
@@ -70,8 +69,7 @@ public class YouTubePage extends BasePage {
             tile.setTitle(video.findElement(title).getText());
             tile.setChannel(video.findElement(channel).getText());
 
-            List<WebElement> durationElements =
-                    video.findElements(durationBadge);
+            List<WebElement> durationElements = video.findElements(durationBadge);
 
             if (!durationElements.isEmpty()) {
                 String length = durationElements.get(0)
